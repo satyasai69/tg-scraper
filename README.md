@@ -44,6 +44,12 @@ The script will create a `telegram_groups.csv` file in the project directory wit
 - Description: The description of the group (if available)
 - Link: The Telegram link to join the group
 
+## TODO
+
+- Implement proxy support to avoid rate limiting or banning
+- Use a list of proxies and rotate them for each request
+- Consider using libraries like `axios` with `https-proxy-agent` for handling requests through proxies
+
 ## Troubleshooting
 
 If you encounter any issues:
