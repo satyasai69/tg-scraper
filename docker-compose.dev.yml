@@ -1,0 +1,57 @@
+# Development override for docker-compose.yml
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  tg-scraper:
+    build:
+      context: .
+      target: development
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/usr/src/app/src:ro
+      - ./tsconfig.json:/usr/src/app/tsconfig.json:ro
+      - ./package.json:/usr/src/app/package.json:ro
+      - ./package-lock.json:/usr/src/app/package-lock.json:ro
+      # Mount node_modules as volume for better performance
+      - node_modules:/usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DEBUG=*
+    command: npm run api:dev
+    # Enable debugging
+    ports:
+      - "3000:3000"
+      - "9229:9229"  # Node.js debug port
+    # Remove resource limits for development
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+
+  # Optional: Add a database for development
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: tg-scraper-db
+  #   environment:
+  #     POSTGRES_DB: tg_scraper
+  #     POSTGRES_USER: dev
+  #     POSTGRES_PASSWORD: devpass
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+  # Optional: Add Redis for caching
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: tg-scraper-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+
+volumes:
+  node_modules:
+  # postgres_data:
+  # redis_data:
