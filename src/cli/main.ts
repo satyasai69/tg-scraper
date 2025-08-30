@@ -42,7 +42,7 @@ async function scrapeTelegramGroups(keyword: string) {
 
         const joinLinks = await page.$$eval(
           ".tg-channel-wrapper.is-list a[href*='/join/']",
-          (anchors) => anchors.map((a) => (a as HTMLAnchorElement).href)
+          (anchors: any[]) => anchors.map((a: any) => (a as HTMLAnchorElement).href)
         );
 
         if (joinLinks.length === 0) {
@@ -118,6 +118,27 @@ async function saveToJSON(data: any[], filename = "telegram_channels.json") {
     console.error("Error saving to JSON:", error);
   }
 }
+
+import { logger } from '../utils/logger';
+
+/**
+ * Run the CLI scraper
+ * @param keyword The keyword to search for
+ * @param options CLI options
+ */
+export async function runCli(keyword: string, options: { maxPages?: number; outputFile?: string }) {
+  logger.info(`Starting CLI scraper for keyword: ${keyword}`);
+  logger.info(`Options:`, options);
+  
+  // TODO: Implement actual scraping logic
+  // This is a placeholder for the CLI functionality
+  console.log('CLI scraping functionality will be implemented here');
+}
+
+/**
+ * Default export for the CLI function
+ */
+export default runCli;
 
 (async () => {
   try {
