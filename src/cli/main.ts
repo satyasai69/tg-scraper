@@ -15,17 +15,55 @@ async function scrapeTelegramGroups(keyword: string) {
       "--no-zygote",
       "--disable-gpu",
       "--disable-web-security",
-      "--disable-features=VizDisplayCompositor",
+      "--disable-features=VizDisplayCompositor,TranslateUI",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
       "--disable-extensions",
       "--disable-plugins",
       "--disable-default-apps",
-      "--single-process",
+      "--disable-hang-monitor",
+      "--disable-prompt-on-repost",
+      "--disable-sync",
+      "--disable-translate",
+      "--metrics-recording-only",
+      "--no-default-browser-check",
+      "--safebrowsing-disable-auto-update",
       "--enable-automation",
       "--password-store=basic",
-      "--use-mock-keychain"
+      "--use-mock-keychain",
+      "--disable-background-networking",
+      "--disable-client-side-phishing-detection",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--force-color-profile=srgb",
+      "--memory-pressure-off",
+      "--max_old_space_size=4096"
     ],
   });
-  const page = await browser.newPage();
+
+  // Add retry logic for page creation
+  let page: any;
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      page = await browser.newPage();
+      console.log("✅ Page created successfully");
+      break;
+    } catch (error) {
+      retries--;
+      console.log(`⚠️ Failed to create page, retries left: ${retries}`);
+      if (retries === 0) {
+        throw new Error(`Failed to create page after multiple attempts: ${error}`);
+      }
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+  }
+
+  if (!page) {
+    throw new Error("Failed to create browser page");
+  }
 
   const results: {
     username: string;

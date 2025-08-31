@@ -55,7 +55,7 @@ async function scrapeTelegramGroups(
         "--no-zygote",
         "--disable-gpu",
         "--disable-web-security",
-        "--disable-features=VizDisplayCompositor",
+        "--disable-features=VizDisplayCompositor,TranslateUI",
         "--disable-background-timer-throttling",
         "--disable-backgrounding-occluded-windows",
         "--disable-renderer-backgrounding",
@@ -72,33 +72,39 @@ async function scrapeTelegramGroups(
         "--enable-automation",
         "--password-store=basic",
         "--use-mock-keychain",
-        "--single-process",
         "--disable-background-networking",
-        "--disable-background-timer-throttling",
         "--disable-client-side-phishing-detection",
-        "--disable-default-apps",
-        "--disable-dev-shm-usage",
-        "--disable-extensions",
-        "--disable-features=TranslateUI",
-        "--disable-hang-monitor",
         "--disable-ipc-flooding-protection",
         "--disable-popup-blocking",
-        "--disable-prompt-on-repost",
-        "--disable-renderer-backgrounding",
-        "--disable-sync",
         "--force-color-profile=srgb",
-        "--metrics-recording-only",
-        "--no-default-browser-check",
-        "--no-first-run",
-        "--safebrowsing-disable-auto-update",
-        "--enable-automation",
-        "--password-store=basic",
-        "--use-mock-keychain"
+        "--memory-pressure-off",
+        "--max_old_space_size=4096"
       ],
     });
     console.log("✅ Browser launched successfully");
 
-    const page = await browser.newPage();
+    // Add retry logic for page creation
+    let page: any;
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        page = await browser.newPage();
+        console.log("✅ Page created successfully");
+        break;
+      } catch (error) {
+        retries--;
+        console.log(`⚠️ Failed to create page, retries left: ${retries}`);
+        if (retries === 0) {
+          throw new Error(`Failed to create page after multiple attempts: ${error}`);
+        }
+        // Wait a bit before retrying
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    if (!page) {
+      throw new Error("Failed to create browser page");
+    }
     const results: TelegramChannel[] = [];
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
       const url = `https://en.tgramsearch.com/search?query=${encodeURIComponent(

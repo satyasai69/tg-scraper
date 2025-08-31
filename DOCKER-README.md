@@ -202,6 +202,13 @@ docker-compose logs -f --tail=100
        docker-compose build --no-cache
        docker-compose up -d
        ```
+   - **Error: `ProtocolError: Protocol error (Target.createTarget): Target closed`**:
+     - This occurs when Chrome launches but immediately closes when creating a new page
+     - The latest code includes retry logic and optimized Chrome arguments to handle this
+     - **Solution**: Restart the container to apply the improved configuration:
+       ```bash
+       docker-compose restart
+       ```
    - **General Chrome Issues**:
      - Check the logs: `docker-compose logs`
      - Verify Chrome installation: `docker-compose exec tg-scraper google-chrome --version`
