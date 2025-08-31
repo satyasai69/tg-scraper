@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
     libxkbcommon0 \
     libxrandr2 \
     libasound2 \
+    libcups2 \
     fonts-liberation \
     libappindicator3-1 \
     xdg-utils \

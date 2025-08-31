@@ -184,7 +184,8 @@ docker-compose logs -f --tail=100
 
 2. **Puppeteer/Chrome Issues**:
    - **Error: `libcups.so.2: cannot open shared object file`**:
-     - This indicates missing Chrome dependencies on your VPS
+     - This indicates missing CUPS library dependency required by Chrome
+     - The latest Dockerfile includes libcups2 package to prevent this error
      - **Solution**: Rebuild the Docker image to install all required dependencies:
        ```bash
        docker-compose down
