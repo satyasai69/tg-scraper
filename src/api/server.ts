@@ -4,13 +4,14 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 // __dirname is available in CommonJS
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const BOT_TOKEN =
-  process.env.BOT_TOKEN || "";
+const PORT = process.env.PORT || 5000;
+const BOT_TOKEN = process.env.BOT_TOKEN || "";
 
 // Middleware
 app.use(cors());
@@ -39,9 +40,9 @@ async function scrapeTelegramGroups(
   maxPages: number = 10
 ): Promise<TelegramChannel[]> {
   let browser;
-  
+
   try {
-    console.log('🚀 Launching browser...');
+    console.log("🚀 Launching browser...");
     browser = await puppeteer.launch({
       headless: true,
       timeout: 60000, // 60 second timeout for browser launch
@@ -54,11 +55,11 @@ async function scrapeTelegramGroups(
         "--no-zygote",
         "--disable-gpu",
         "--disable-web-security",
-        "--disable-features=VizDisplayCompositor"
+        "--disable-features=VizDisplayCompositor",
       ],
     });
-    console.log('✅ Browser launched successfully');
-    
+    console.log("✅ Browser launched successfully");
+
     const page = await browser.newPage();
     const results: TelegramChannel[] = [];
     for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
@@ -143,8 +144,9 @@ async function scrapeTelegramGroups(
     }
     return results;
   } catch (error) {
-    console.error('❌ Browser launch failed:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("❌ Browser launch failed:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to launch browser: ${errorMessage}`);
   } finally {
     if (browser) {
@@ -349,7 +351,7 @@ bot.on("error", (error) => {
  * Start the API server
  * @param port The port to run the server on
  */
-export async function startApiServer(port: number = 3000): Promise<void> {
+export async function startApiServer(port: number = 5000): Promise<void> {
   return new Promise((resolve) => {
     app.listen(port, () => {
       console.log(`🚀 API Server running on port ${port}`);
@@ -367,6 +369,6 @@ export default startApiServer;
 
 // If this file is run directly, start the server
 if (process.argv[1] && process.argv[1].endsWith("server.js")) {
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 5000;
   startApiServer(Number(PORT));
 }

@@ -23,7 +23,7 @@ Edit `.env` and add your Telegram bot token:
 
 ```env
 BOT_TOKEN=your_actual_bot_token_here
-PORT=3000
+PORT=5000
 MAX_PAGES=10
 TIMEOUT=60000
 ```
@@ -50,7 +50,7 @@ docker build -t tg-scraper .
 # Run the container
 docker run -d \
   --name tg-scraper-app \
-  -p 3000:3000 \
+  -p 5000:5000 \
   -e BOT_TOKEN=your_bot_token_here \
   -v $(pwd)/downloads:/usr/src/app/downloads \
   -v $(pwd)/logs:/usr/src/app/logs \
@@ -61,18 +61,18 @@ docker run -d \
 
 Once running, the following endpoints are available:
 
-- **Health Check**: `GET http://localhost:3000/health`
-- **Scrape**: `POST http://localhost:3000/scrape`
-- **Download**: `GET http://localhost:3000/download/:filename`
+- **Health Check**: `GET http://localhost:5000/health`
+- **Scrape**: `POST http://localhost:5000/scrape`
+- **Download**: `GET http://localhost:5000/download/:filename`
 
 ### Example API Usage
 
 ```bash
 # Health check
-curl http://localhost:3000/health
+curl http://localhost:5000/health
 
 # Scrape channels
-curl -X POST http://localhost:3000/scrape \
+curl -X POST http://localhost:5000/scrape \
   -H "Content-Type: application/json" \
   -d '{"keyword": "crypto", "maxPages": 5}'
 ```
@@ -91,7 +91,7 @@ curl -X POST http://localhost:3000/scrape \
 | Variable | Description | Default |
 |----------|-------------|----------|
 | `BOT_TOKEN` | Telegram Bot Token | Required |
-| `PORT` | Server port | 3000 |
+| `PORT` | Server port | 5000 |
 | `MAX_PAGES` | Maximum pages to scrape | 10 |
 | `TIMEOUT` | Request timeout in ms | 60000 |
 | `NODE_ENV` | Node environment | production |
@@ -140,7 +140,7 @@ events {
 
 http {
     upstream tg-scraper {
-        server tg-scraper:3000;
+        server tg-scraper:5000;
     }
 
     server {
@@ -208,7 +208,7 @@ docker-compose exec tg-scraper sh
 docker-compose exec tg-scraper node -e "console.log(require('puppeteer').executablePath())"
 
 # Test API manually
-docker-compose exec tg-scraper curl http://localhost:3000/health
+docker-compose exec tg-scraper curl http://localhost:5000/health
 ```
 
 ## Development

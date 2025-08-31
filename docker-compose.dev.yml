@@ -20,7 +20,7 @@ services:
     command: npm run api:dev
     # Enable debugging
     ports:
-      - "3000:3000"
+      - "5000:5000"
       - "9229:9229"  # Node.js debug port
     # Remove resource limits for development
     deploy:

@@ -74,8 +74,8 @@ start() {
     # Check if container is running
     if docker-compose ps | grep -q "Up"; then
         log_success "Application started successfully!"
-        log_info "API available at: http://localhost:3000"
-        log_info "Health check: http://localhost:3000/health"
+        log_info "API available at: http://localhost:5000"
+        log_info "Health check: http://localhost:5000/health"
         log_info "View logs with: ./docker-scripts.sh logs"
     else
         log_error "Failed to start application. Check logs with: ./docker-scripts.sh logs"
@@ -132,9 +132,9 @@ health() {
     fi
     
     # Test health endpoint
-    if curl -s http://localhost:3000/health > /dev/null; then
+    if curl -s http://localhost:5000/health > /dev/null; then
         log_success "Application is healthy"
-        curl -s http://localhost:3000/health | jq . 2>/dev/null || curl -s http://localhost:3000/health
+        curl -s http://localhost:5000/health | jq . 2>/dev/null || curl -s http://localhost:5000/health
     else
         log_error "Health check failed"
         return 1
