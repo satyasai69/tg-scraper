@@ -10,7 +10,7 @@ dotenv.config();
 // __dirname is available in CommonJS
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 const BOT_TOKEN = process.env.BOT_TOKEN || "";
 
 // Middleware
@@ -44,7 +44,7 @@ async function scrapeTelegramGroups(
   try {
     console.log("🚀 Launching browser...");
     browser = await puppeteer.launch({
-      headless: true,
+      headless: "new",
       timeout: 60000, // 60 second timeout for browser launch
       args: [
         "--no-sandbox",
@@ -56,6 +56,44 @@ async function scrapeTelegramGroups(
         "--disable-gpu",
         "--disable-web-security",
         "--disable-features=VizDisplayCompositor",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+        "--disable-extensions",
+        "--disable-plugins",
+        "--disable-default-apps",
+        "--disable-hang-monitor",
+        "--disable-prompt-on-repost",
+        "--disable-sync",
+        "--disable-translate",
+        "--metrics-recording-only",
+        "--no-default-browser-check",
+        "--safebrowsing-disable-auto-update",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--single-process",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-client-side-phishing-detection",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-extensions",
+        "--disable-features=TranslateUI",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--disable-sync",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-default-browser-check",
+        "--no-first-run",
+        "--safebrowsing-disable-auto-update",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain"
       ],
     });
     console.log("✅ Browser launched successfully");
@@ -351,7 +389,7 @@ bot.on("error", (error) => {
  * Start the API server
  * @param port The port to run the server on
  */
-export async function startApiServer(port: number = 5000): Promise<void> {
+export async function startApiServer(port: number = 6000): Promise<void> {
   return new Promise((resolve) => {
     app.listen(port, () => {
       console.log(`🚀 API Server running on port ${port}`);
@@ -369,6 +407,6 @@ export default startApiServer;
 
 // If this file is run directly, start the server
 if (process.argv[1] && process.argv[1].endsWith("server.js")) {
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 6000;
   startApiServer(Number(PORT));
 }

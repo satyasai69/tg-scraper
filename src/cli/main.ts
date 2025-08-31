@@ -4,8 +4,26 @@ import path from "path";
 
 async function scrapeTelegramGroups(keyword: string) {
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: "new",
+    timeout: 60000,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-gpu",
+      "--disable-web-security",
+      "--disable-features=VizDisplayCompositor",
+      "--disable-extensions",
+      "--disable-plugins",
+      "--disable-default-apps",
+      "--single-process",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain"
+    ],
   });
   const page = await browser.newPage();
 

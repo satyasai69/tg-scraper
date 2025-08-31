@@ -38,7 +38,7 @@ program
 program
   .command('api')
   .description('Start the API server')
-  .option('-p, --port <number>', 'server port', '5000')
+  .option('-p, --port <number>', 'server port', '6000')
   .action(async (options: any) => {
     try {
       await startApiServer(parseInt(options.port));
@@ -63,7 +63,7 @@ program
 program
   .command('serve')
   .description('Start both API server and Telegram bot')
-  .option('-p, --port <number>', 'server port', '5000')
+  .option('-p, --port <number>', 'server port', '6000')
   .action(async (options: any) => {
     try {
       // Start both API server and bot

@@ -16,7 +16,7 @@ This project provides both a REST API and a Telegram bot for scraping Telegram c
 ```
 node dist/index.js --help
 node dist/index.js scrape "crypto" --pages 3 --output results.csv
-node dist/index.js api --port 5000
+node dist/index.js api --port 6000
 node dist/index.js bot
 ```
 
@@ -152,7 +152,7 @@ The generated CSV files contain the following columns:
 ### Environment Variables
 
 - `BOT_TOKEN`: Your Telegram bot token (required)
-- `PORT`: Server port (default: 5000)
+- `PORT`: Server port (default: 6000)
 - `MAX_PAGES`: Maximum pages to scrape (default: 10)
 - `TIMEOUT`: Request timeout in milliseconds (default: 60000)
 

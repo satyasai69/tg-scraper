@@ -23,7 +23,7 @@ Edit `.env` and add your Telegram bot token:
 
 ```env
 BOT_TOKEN=your_actual_bot_token_here
-PORT=5000
+PORT=6000
 MAX_PAGES=10
 TIMEOUT=60000
 ```
@@ -50,7 +50,7 @@ docker build -t tg-scraper .
 # Run the container
 docker run -d \
   --name tg-scraper-app \
-  -p 5000:5000 \
+  -p 6000:6000 \
   -e BOT_TOKEN=your_bot_token_here \
   -v $(pwd)/downloads:/usr/src/app/downloads \
   -v $(pwd)/logs:/usr/src/app/logs \
@@ -61,18 +61,18 @@ docker run -d \
 
 Once running, the following endpoints are available:
 
-- **Health Check**: `GET http://localhost:5000/health`
-- **Scrape**: `POST http://localhost:5000/scrape`
-- **Download**: `GET http://localhost:5000/download/:filename`
+- **Health Check**: `GET http://localhost:6000/health`
+- **Scrape**: `POST http://localhost:6000/scrape`
+- **Download**: `GET http://localhost:6000/download/:filename`
 
 ### Example API Usage
 
 ```bash
 # Health check
-curl http://localhost:5000/health
+curl http://localhost:6000/health
 
 # Scrape channels
-curl -X POST http://localhost:5000/scrape \
+curl -X POST http://localhost:6000/scrape \
   -H "Content-Type: application/json" \
   -d '{"keyword": "crypto", "maxPages": 5}'
 ```
@@ -91,7 +91,7 @@ curl -X POST http://localhost:5000/scrape \
 | Variable | Description | Default |
 |----------|-------------|----------|
 | `BOT_TOKEN` | Telegram Bot Token | Required |
-| `PORT` | Server port | 5000 |
+| `PORT` | Server port | 6000 |
 | `MAX_PAGES` | Maximum pages to scrape | 10 |
 | `TIMEOUT` | Request timeout in ms | 60000 |
 | `NODE_ENV` | Node environment | production |
@@ -140,7 +140,7 @@ events {
 
 http {
     upstream tg-scraper {
-        server tg-scraper:5000;
+        server tg-scraper:6000;
     }
 
     server {
@@ -183,8 +183,27 @@ docker-compose logs -f --tail=100
    - Verify Docker is running: `docker --version`
 
 2. **Puppeteer/Chrome Issues**:
-   - The Dockerfile installs Chromium and configures Puppeteer
-   - If you encounter issues, check the logs: `docker-compose logs`
+   - **Error: `libcups.so.2: cannot open shared object file`**:
+     - This indicates missing Chrome dependencies on your VPS
+     - **Solution**: Rebuild the Docker image to install all required dependencies:
+       ```bash
+       docker-compose down
+       docker-compose build --no-cache
+       docker-compose up -d
+       ```
+   - **Error: `Failed to launch the browser process`**:
+     - Usually caused by missing system libraries or incorrect Chrome configuration
+     - The updated Dockerfile now uses Debian base with Google Chrome and all required dependencies
+     - **Solution**: Pull the latest code and rebuild:
+       ```bash
+       git pull origin main
+       docker-compose down
+       docker-compose build --no-cache
+       docker-compose up -d
+       ```
+   - **General Chrome Issues**:
+     - Check the logs: `docker-compose logs`
+     - Verify Chrome installation: `docker-compose exec tg-scraper google-chrome --version`
 
 3. **Permission Issues**:
    - Ensure the downloads and logs directories are writable
@@ -202,13 +221,19 @@ docker-compose logs -f --tail=100
 
 ```bash
 # Access container shell
-docker-compose exec tg-scraper sh
+docker-compose exec tg-scraper bash
+
+# Check Chrome installation
+docker-compose exec tg-scraper google-chrome --version
 
 # Check Puppeteer installation
 docker-compose exec tg-scraper node -e "console.log(require('puppeteer').executablePath())"
 
 # Test API manually
-docker-compose exec tg-scraper curl http://localhost:5000/health
+docker-compose exec tg-scraper curl http://localhost:6000/health
+
+# Test Chrome launch manually
+docker-compose exec tg-scraper node -e "const puppeteer = require('puppeteer'); puppeteer.launch({headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox']}).then(() => console.log('Chrome launched successfully')).catch(console.error)"
 ```
 
 ## Development
@@ -230,6 +255,30 @@ EOF
 
 # Run in development mode
 docker-compose up
+```
+
+## Migration from Previous Versions
+
+If you're upgrading from a previous version that used Alpine Linux base image, you need to rebuild the Docker image to get the new Debian-based image with proper Chrome dependencies:
+
+```bash
+# Stop the current application
+docker-compose down
+
+# Remove the old image to force rebuild
+docker rmi tg-scraper
+
+# Pull latest code (if using git)
+git pull origin main
+
+# Rebuild with no cache to ensure fresh dependencies
+docker-compose build --no-cache
+
+# Start the application
+docker-compose up -d
+
+# Verify Chrome is working
+docker-compose exec tg-scraper google-chrome --version
 ```
 
 ## Cleanup
